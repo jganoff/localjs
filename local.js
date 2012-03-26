@@ -18,6 +18,8 @@ define(function () {
    */
   registerLocal = function (name, module) {
     defined[name] = [module];
+    // Call any callbacks waiting for this local to be defined and remove them from our cache
+    invokeCallbacks(name, module);
   };
 
   /**
@@ -92,8 +94,6 @@ define(function () {
       module = (typeof f !== "undefined") ? f.call(null) : null;
       // Register the local module
       registerLocal(name, module);
-      // Call any callbacks waiting for this local to be defined and remove them from our cache
-      invokeCallbacks(name, module);
     }
   };
 
