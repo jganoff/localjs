@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LocalJS Test</title>
+
+    <style>
+      #status-grid {
+        margin: 50px 0 0 0;
+      }
+      #status-grid > div {
+        float: left;
+        margin: 0 10px 0 0;
+        background-color: red;
+        width: 50px;
+        height: 50px;
+        vertical-align: middle;
+        text-align: center;
+      }
+
+      .loaded {
+        background-color: green !important;
+      }
+    </style>
+
+    <script type='text/javascript' src='https://raw.github.com/jrburke/requirejs/master/require.js'></script>
+
+    <script type='text/javascript'>
+      window.localSample = {};
+      var updateGrid = function (name) {
+        document.getElementById(name).className = "loaded";
+      }
+
+      // Configure RequireJS
+      require({
+          waitSeconds : 9999, // Wait long enough for user input before timing out
+          paths : {
+              local : '../local' // Tell RequireJS where to find the local plugin
+          }
+      });
+
+      require(['local!a'], function (a) {
+        updateGrid("a");
+      });
+
+      require(['local!b'], function (b) {
+        updateGrid("b");
+      });
+
+      // Only update C and D when both are loaded
+      require(['local!c', 'local!d'], function (c, d) {
+        updateGrid("c");
+        updateGrid("d");
+      });
+
+      // Provide a global hook for our buttons to call back into
+      require(['local'], function (local) {
+        localSample.defineLocal = function (name) {
+          local.define(name);
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <h1>RequireJS local plugin</h1>
+    <div id="buttons">
+      <p>Demonstrates the ability to depend on local modules without requesting any additional scripts. Defining a module will light up the corresponding cell. Cells for C and D will not light up until both are defined.</p>
+
+      <button onclick="localSample.defineLocal('a');">Define A</button>
+      <button onclick="localSample.defineLocal('b');">Define B</button>
+      <button onclick="localSample.defineLocal('c');">Define C</button>
+      <button onclick="localSample.defineLocal('d');">Define D</button>
+    </div>
+    <div id="status-grid">
+      <div id="a">A</div>
+      <div id="b">B</div>
+      <div id="c">C</div>
+      <div id="d">D</div>
+    </div>
+  </body>
+</table>
+  </body>
+</html>
