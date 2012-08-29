@@ -61,16 +61,28 @@ define(function () {
    * local.js public interface
    */
   local = {
+    version: '1.0.0',
+    
     /**
      * RequireJS plugin API to load a module.
      */
     load: function (name, req, load, config) {
+      if (config.isBuild) {
+        load(null);
+      }
+      // if (!config.isBrowser) {
+      //   throw 'Illegal environment. LocalJS is intended to be used in the context of a browser only!';
+      // }
       if (isDefined(name)) {
         // If we're already defined execute the callback immediately
         load.call(null, defined[name][0]);
       } else {
         // Cache the callback to be notified when the local module has been loaded
-        addCallback(name, load);
+        // addCallback(name, load);
+        req(['local!' + name], function(value) {
+          alert('loaded ' + name);
+          load(value);
+        });
       }
     },
 

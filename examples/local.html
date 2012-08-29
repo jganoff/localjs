@@ -22,7 +22,7 @@
       }
     </style>
 
-    <script type='text/javascript' src='https://raw.github.com/jrburke/requirejs/master/require.js'></script>
+    <script type='text/javascript' src='require.js'></script>
 
     <script type='text/javascript'>
       window.localSample = {};
@@ -58,6 +58,30 @@
           local.define(name);
         }
       });
+
+      makeTesting = function() {
+        require(['local'], function(local) {
+          local.define('testing', function() {
+            return {
+              name: 'testing!!!!!!!!'
+            };
+          });
+        });
+      };
+
+      makeTestingClean = function () {
+        define('local!testing', function() {
+          return {
+            name: 'testing clean!!!'
+          };
+        });
+      };
+
+      test = function() {
+        require(['local!testing'], function(testing) {
+          alert('Testing name: ' + testing.name);
+        });
+      };
     </script>
   </head>
   <body>
@@ -69,6 +93,11 @@
       <button onclick="localSample.defineLocal('b');">Define B</button>
       <button onclick="localSample.defineLocal('c');">Define C</button>
       <button onclick="localSample.defineLocal('d');">Define D</button>
+
+
+      <button onclick="makeTesting();">Make Testing</button>
+      <button onclick="makeTestingClean();">Make Testing (Clean)</button>
+      <button onclick="test();">Require Testing</button>
     </div>
     <div id="status-grid">
       <div id="a">A</div>
